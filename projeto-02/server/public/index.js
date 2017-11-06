@@ -23,7 +23,7 @@ function updateCount() {
   for (let topic in data.topics) {
     if (data.topics.hasOwnProperty(topic)) {
       const msg = data.topics[topic];
-      if (msg) {
+      if (+msg) {
         count++;
       }
     }
