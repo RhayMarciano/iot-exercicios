@@ -29,6 +29,8 @@ const int STATUS_OCUPADA = 1;
 const int STATUS_LIVRE = 0;
 const int STATUS_OFFLINE = -1;
 
+// A array vagas é inicializada com valores 0 == STATUS_LIVRE
+// porém precisamos mudar este valor para STATUS_OFFLINE para não as considerarmos na contagem
 void inicializarVagas() {
 	for (int i = 0; i < QUANTIDADE_VAGAS; i++) {
 		vagas[i] = STATUS_OFFLINE;
@@ -36,15 +38,16 @@ void inicializarVagas() {
 }
 
 int extrairIdVaga(char* topico) {
+	// ver exemplos/topico-para-int.ino
 	int dezena = topico[6] - '0';
 	int unidade = topico[7] - '0';
 
 	return dezena * 10 + unidade;
 }
 
-
+int tempoUltimaMensagemMQTT = 0;
 void callback(char* topico, byte* mensagem, unsigned int length) {
-	tempoUltimaMensagem = millis();
+	tempoUltimaMensagemMQTT = millis();
 
 	int idVaga = extrairIdVaga(topico);
 	int indice = idVaga - 1;
@@ -59,19 +62,20 @@ void callback(char* topico, byte* mensagem, unsigned int length) {
 	atualizarContagem();
 }
 
+// Percore a array de vagas para as contar novamente
 void atualizarContagem() {
 	int ocupadas = 0;
 	int livres = 0;
 
-	for(int i = 0; i < QUANTIDADE_VAGAS; i++) {
+	for (int i = 0; i < QUANTIDADE_VAGAS; i++) {
 		switch(vagas[i]) {
 			case STATUS_OCUPADA:
-			ocupadas++
+			ocupadas++;
 			break;
 			case STATUS_LIVRE:
 			livres++;
 			break;
-			case STATUS_OFFLINE;
+			case STATUS_OFFLINE:
 			// fazer nada
 			break;
 		}
@@ -80,10 +84,15 @@ void atualizarContagem() {
 	exibirContagem(livres, ocupadas);
 }
 
+// Atualiza LCD com contagem das vagas
 exibirContagem(int livres, int ocupadas) {
 	lcd.clear();
-	lcd.print("Livres: ");
-	lcd.print(livres);
+	if (livres == 0) {
+		lcd.print("SEM VAGAS LIVRES");
+	} else {
+		lcd.print("Livres: ");
+		lcd.print(livres);
+	}
 
 	lcd.setCursor(0, 1);
 	lcd.print("Ocupadas: ");
@@ -129,9 +138,9 @@ int checkReconectarMQTT() {
 	}
 }
 
-int tempoUltimaMensagemMQTT = 0;
 const long TEMPO_DESLIGAR_LED = 10 * 1000;
-// Verifica se há necessidade de deligar o LCD
+
+// Verifica se há necessidade de deligar o LCD devido a não termos recebido mensagens mqtt
 void checkDesligarLCD() {
 	long agora = millis();
 	if(agora - tempoUltimaMensagemMQTT > TEMPO_DESLIGAR_LED) {
@@ -143,9 +152,10 @@ void checkDesligarLCD() {
 
 void loop() {
 	checkReconectarMQTT();
+
+	checkDesligarLCD();
+
 	// Chamada de método requirido pela biblioteca MQTT
 	// ele é necessário para que ela tenha uma oportunidade de processar envios e recebimentos de respostas
 	client.loop();
-
-	checkDesligarLCD();
 }
