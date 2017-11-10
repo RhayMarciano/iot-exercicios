@@ -57,18 +57,26 @@ long tempoUltimaMensagemMQTT = 0;
 void callback(char* topico, byte* mensagem, unsigned int length) {
   tempoUltimaMensagemMQTT = millis();
 
-  int idVaga = extrairIdVaga(topico);
-  // subtraímos 1 pois a contagem começa em 0
+	int idVaga = extrairIdVaga(topico);
+
+	// Converter primeiro caractere da mensagem em número
+	// isto assume que esse caractere está entre '0' e '9'
+  int status = mensagem[0] - '0';
+
+	processarAlteracaoVaga(idVaga, status);
+}
+
+void processarAlteracaoVaga(int id, int status) {
+	// subtraímos 1 pois a contagem começa em 0
   int indice = idVaga - 1;
 
-  if (length == 0) {
-    // mensagem vazia, devemos considerar que a vaga não existe
-    vagas[indice] = -1;
-  }
-  int msg = mensagem[0] - '0';
+	if (length == 0) {
+		// mensagem vazia, devemos considerar que a vaga não existe mais
+		vagas[indice] = -1;
+	}
 
-  vagas[indice] = msg;
-  atualizarContagem();
+	vagas[indice] = msg;
+	atualizarContagem();
 }
 
 // Percore a array de vagas para as contar novamente
