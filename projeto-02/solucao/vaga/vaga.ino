@@ -19,7 +19,8 @@ const char* MQTT_CLIENT_ID = "arduino-vaga-42";
 
 const char* topic = "vagas/42";
 
-const int PIN_OCUPADO = 9;
+// PIN de LED para indicar se a vaga está ocupada
+const int PIN_OCUPADO = 7;
 const int DISTANCIA_MINIMA = 8; // cm
 
 Ultrasonic ultrasonic(8, 9);
