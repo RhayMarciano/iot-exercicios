@@ -70,18 +70,35 @@ void atualizarContagem() {
 	int ocupadas = 0;
 	int livres = 0;
 
+	// Para cada posição das vagas...
 	for (int i = 0; i < QUANTIDADE_VAGAS; i++) {
 		switch(vagas[i]) {
+			// contar se estão ocupadas ...
 			case STATUS_OCUPADA:
 			ocupadas++;
 			break;
+
+			// ou livres
 			case STATUS_LIVRE:
 			livres++;
 			break;
+
 			case STATUS_OFFLINE:
 			// fazer nada
 			break;
 		}
+
+		// O seguinte código é o equivalente do `switch/case` acima
+		// tilizando `if`:
+
+		/*
+		int valor = vagas[i];
+		if (valor == STATUS_OCUPADA) {
+			ocupadas++;
+		} else if (valor == STATUS_LIVRE) {
+			livres++;
+		}
+		*/
 	}
 
 	exibirContagem(livres, ocupadas);
