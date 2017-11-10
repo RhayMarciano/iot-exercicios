@@ -12,9 +12,10 @@ EthernetClient ethClient;
 #include <SerialPubSubClient.h>
 #endif
 
-const char* MQTT_SERVER = "test.mosquitto.org";
+// const char* MQTT_SERVER = "test.mosquitto.org";
+IPAddress MQTT_SERVER(192, 168, 3, 136);
 const int MQTT_PORT = 1883;
-const char* MQTT_CLIENT_ID = "arduino-42";
+const char* MQTT_CLIENT_ID = "arduino-vaga-42";
 
 const char* topic = "vagas/42";
 
