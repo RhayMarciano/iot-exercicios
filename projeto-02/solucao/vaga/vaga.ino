@@ -29,74 +29,74 @@ Ultrasonic ultrasonic(8, 9);
 PubSubClient client(MQTT_SERVER, NULL, MQTT_PORT, ethClient);
 
 void setup() {
-	Serial.begin(9600);
-	while (!Serial) {};
+  Serial.begin(9600);
+  while (!Serial) {};
 
-	#ifdef ONLINE
-	configurarEthernet()
+  #ifdef ONLINE
+  configurarEthernet()
 
-	conectarMQTT()
-	#endif
+  conectarMQTT()
+  #endif
 }
 
 void configurarEthernet() {
-	if(!Ethernet.begin(mac)) {
-		Serial.println("Falha no DHCP");
-	};
+  if(!Ethernet.begin(mac)) {
+    Serial.println("Falha no DHCP");
+  };
 }
 
 int conectarMQTT() {
-	return client.connect(MQTT_CLIENT_ID);
+  return client.connect(MQTT_CLIENT_ID);
 }
 
 void atualizarDistancia(int distancia) {
-	if(distancia < DISTANCIA_MINIMA) {
-		avisarOcupada(1);
-	} else {
-		avisarOcupada(0);
-	}
+  if(distancia < DISTANCIA_MINIMA) {
+    avisarOcupada(1);
+  } else {
+    avisarOcupada(0);
+  }
 }
 
 void avisarOcupada(int ocupada) {
-	if(ocupada) {
-		digitalWrite(PIN_OCUPADO, HIGH);
-	} else {
-		digitalWrite(PIN_OCUPADO, LOW);
-	}
-	publicarOcupadaMQTT(ocupada);
+  if(ocupada) {
+    digitalWrite(PIN_OCUPADO, HIGH);
+  } else {
+    digitalWrite(PIN_OCUPADO, LOW);
+  }
+  publicarOcupadaMQTT(ocupada);
 }
 
 void publicarOcupadaMQTT(int ocupada) {
-	if (ocupada) {
-		client.publish(topic, "1", true);
-	} else {
-		client.publish(topic, "0", true);
-	}
+  if (ocupada) {
+    client.publish(topic, "1", true);
+  } else {
+    client.publish(topic, "0", true);
+  }
 }
 
 // Variavel global para guardar o tempo da última tentativa de conexão
 unsigned long ultimaTentativaReconectar = 0;
 int checkReconectarMQTT() {
-	if(!client.connected()) {
-		long agora = millis();
-		if(agora - ultimaTentativaReconectar > 5000) {
-			Serial.println("reconectando...");
-			return conectarMQTT();
-		}
-		ultimaTentativaReconectar = agora;
-	}
+  if(!client.connected()) {
+    long agora = millis();
+    if(agora - ultimaTentativaReconectar > 5000) {
+      Serial.println("reconectando...");
+      return conectarMQTT();
+    }
+    ultimaTentativaReconectar = agora;
+  }
 }
 
 void loop() {
-	checkReconectarMQTT();
+  checkReconectarMQTT();
 
-	int distancia = ultrasonic.distanceRead();
-	atualizarDistancia(distancia);
+  int distancia = ultrasonic.distanceRead();
+  atualizarDistancia(distancia);
 
-	// Chamada de método requirido pela biblioteca MQTT
-	// ele é necessário para que ela tenha uma oportunidade de processar envios e recebimentos de respostas
-	client.loop();
+  // Chamada de método requirido pela biblioteca MQTT
+  // ele é necessário para que ela tenha uma oportunidade de processar envios e recebimentos de respostas
+  client.loop();
 
-	// intervalo arbitrário entre atualizações
-	delay(1500);
+  // intervalo arbitrário entre atualizações
+  delay(1500);
 }
