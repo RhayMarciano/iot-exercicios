@@ -78,6 +78,7 @@ void publicarOcupadaMQTT(int ocupada) {
 }
 
 // Variavel global para guardar o tempo da última tentativa de conexão
+// utilizamos `long` pois a quantidade de millis desde o inicio do programa pode ultrapassar o valor máximo para `int`
 unsigned long ultimaTentativaReconectar = 0;
 int checkReconectarMQTT() {
   if(!client.connected()) {
