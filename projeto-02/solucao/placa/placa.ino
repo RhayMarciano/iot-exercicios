@@ -9,6 +9,8 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 // Se não definirmos o nome ONLINE, podemos utilizar uma versão diferente da
 // biblioteca que simula MQTT via a comunicação serial
+// podendo assim testar sem conexão
+#define ONLINE 0
 #ifdef ONLINE
 #include <PubSubClient.h>
 #else
