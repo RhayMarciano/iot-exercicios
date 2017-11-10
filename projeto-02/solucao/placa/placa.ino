@@ -10,7 +10,8 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 // Se não definirmos o nome ONLINE, podemos utilizar uma versão diferente da
 // biblioteca que simula MQTT via a comunicação serial
 // podendo assim testar sem conexão
-#define ONLINE 0
+// ver https://github.com/paolobueno/SerialPubSubClient
+#define ONLINE 1
 #ifdef ONLINE
 #include <PubSubClient.h>
 #else
@@ -40,6 +41,9 @@ void inicializarVagas() {
   }
 }
 
+// Extrai id da vaga a partir do tópico
+// este método assume que o formato do tópico seja "vagas/##"
+// ex.: "vagas/15", "vagas/01", etc
 int extrairIdVaga(char* topico) {
   // ver exemplos/topico-para-int.ino
   int dezena = topico[6] - '0';

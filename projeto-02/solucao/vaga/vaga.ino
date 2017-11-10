@@ -7,7 +7,8 @@ EthernetClient ethClient;
 // Se não definirmos o nome ONLINE, podemos utilizar uma versão diferente da
 // biblioteca que simula MQTT via a comunicação serial
 // podendo assim testar sem conexão
-#define ONLINE 0
+// ver https://github.com/paolobueno/SerialPubSubClient
+#define ONLINE 1
 #ifdef ONLINE
 #include <PubSubClient.h>
 #else
