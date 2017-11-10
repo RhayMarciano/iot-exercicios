@@ -89,7 +89,7 @@ void atualizarContagem() {
 		}
 
 		// O seguinte código é o equivalente do `switch/case` acima
-		// tilizando `if`:
+		// utilizando `if`:
 
 		/*
 		int valor = vagas[i];
