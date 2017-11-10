@@ -56,21 +56,21 @@ void atualizarDistancia(int distancia) {
 	}
 }
 
-void publicarOcupada(int ocupada) {
-	if (ocupada) {
-		client.publish(topic, "1", true);
-	} else {
-		client.publish(topic, "0", true);
-	}
-}
-
 void avisarOcupada(int ocupada) {
 	if(ocupada) {
 		digitalWrite(PIN_OCUPADO, HIGH);
 	} else {
 		digitalWrite(PIN_OCUPADO, LOW);
 	}
-	publicarOcupada(ocupada);
+	publicarOcupadaMQTT(ocupada);
+}
+
+void publicarOcupadaMQTT(int ocupada) {
+	if (ocupada) {
+		client.publish(topic, "1", true);
+	} else {
+		client.publish(topic, "0", true);
+	}
 }
 
 // Variavel global para guardar o tempo da última tentativa de conexão
