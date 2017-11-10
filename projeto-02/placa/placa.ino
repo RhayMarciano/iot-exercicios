@@ -25,11 +25,12 @@ const char* topic = "vagas/#";
 const int QUANTIDADE_VAGAS = 50;
 const int vagas[QUANTIDADE_VAGAS] = {};
 
-const int STATUS_OCUPADA = 1;
-const int STATUS_LIVRE = 0;
+const int STATUS_OCUPADA = 0;
+const int STATUS_LIVRE = 1;
+// Terceiro estado para a vaga que indica que ela não se reportou ao broker MQTT
 const int STATUS_OFFLINE = -1;
 
-// A array vagas é inicializada com valores 0 == STATUS_LIVRE
+// A array vagas é inicializada com valores 0 == STATUS_OCUPADA
 // porém precisamos mudar este valor para STATUS_OFFLINE para não as considerarmos na contagem
 void inicializarVagas() {
 	for (int i = 0; i < QUANTIDADE_VAGAS; i++) {
@@ -45,11 +46,13 @@ int extrairIdVaga(char* topico) {
 	return dezena * 10 + unidade;
 }
 
-int tempoUltimaMensagemMQTT = 0;
+// Variável global para armazenarmos o instante que recebemos a ultima mensagem MQTT
+long tempoUltimaMensagemMQTT = 0;
 void callback(char* topico, byte* mensagem, unsigned int length) {
 	tempoUltimaMensagemMQTT = millis();
 
 	int idVaga = extrairIdVaga(topico);
+	// subtraímos 1 pois a contagem começa em 0
 	int indice = idVaga - 1;
 
 	if (length == 0) {
